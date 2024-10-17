@@ -50,18 +50,22 @@ public class ThreadFX extends Application {
                         //TODO
                         //Hier muss vernünftige "Arbeit" eingefügt werden
 
+                        Platform.runLater(() -> {
+                            final Label labelZwei = new Label("Hier könnte Ihre File stehen. Stellen Sie sich das mal vor :o");
 
-                        final Label labelZwei = new Label("Hier könnte Ihre File stehen. Stellen Sie sich das mal vor :o");
-                        content.getChildren().addAll(labelZwei);
 
 
-                        Stage stageZwei = new Stage();
-                        final VBox contentZwei = new VBox();
-                        Scene sceneZwei = new Scene(contentZwei);
-                        contentZwei.setPrefSize(400, 300);
+                            Stage stageZwei = new Stage();
+                            final VBox contentZwei = new VBox();
+                            Scene sceneZwei = new Scene(contentZwei);
+                            contentZwei.getChildren().addAll(labelZwei);
+                            contentZwei.setPrefSize(400, 300);
 
-                        stageZwei.setScene(sceneZwei);
-                        stageZwei.show();
+                            stageZwei.setScene(sceneZwei);
+                            stageZwei.show();
+                        });
+
+
                         /*
                         final int MEASURE_WORK = 5000;
                         final int STEP = MEASURE_WORK / 20;
@@ -101,6 +105,7 @@ public class ThreadFX extends Application {
             public void handle(ActionEvent event) {
                 locateFile(event);
                 System.out.println("File wurde ausgewählt");
+                service.reset();
                 service.start();
             }
         });
@@ -116,6 +121,7 @@ public class ThreadFX extends Application {
         System.out.println("Button gedrückt, locateFile aufgerufen!");
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Open File");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
         File file = chooser.showOpenDialog(new Stage());
     }
 }
