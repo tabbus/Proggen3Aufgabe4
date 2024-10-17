@@ -2,11 +2,9 @@ package de.medieninformatik.threadfx;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,8 +14,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.nio.file.Files;
 
 public class ThreadFX extends Application {
+
+    private File selectedFile;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -26,10 +27,6 @@ public class ThreadFX extends Application {
         content.setPrefSize(400, 150);
 
         final Button button = new Button("Choose File");
-
-        
-        //TODO
-        //Progress Bar wird für die Aufgabe nicht benötigt
         final ProgressBar progressBar = new ProgressBar();
         progressBar.setPrefWidth(350);
         progressBar.progressProperty().setValue(0.0);
@@ -40,81 +37,51 @@ public class ThreadFX extends Application {
         stage.setScene(new Scene(content));
         stage.show();
 
-        final Service<Void> service = new Service<Void>() {
+        final Service<String> service = new Service<String>() {
 
             @Override
-            protected Task<Void> createTask() {
-                return new Task<Void>() {
+            protected Task<String> createTask() {
+                return new Task<String>() {
                     @Override
-                    protected Void call() throws Exception {
-                        //TODO
-                        //Hier muss vernünftige "Arbeit" eingefügt werden
-
-                        Platform.runLater(() -> {
-                            final Label labelZwei = new Label("Hier könnte Ihre File stehen. Stellen Sie sich das mal vor :o");
-
-
-
-                            Stage stageZwei = new Stage();
-                            final VBox contentZwei = new VBox();
-                            Scene sceneZwei = new Scene(contentZwei);
-                            contentZwei.getChildren().addAll(labelZwei);
-                            contentZwei.setPrefSize(400, 300);
-
-                            stageZwei.setScene(sceneZwei);
-                            stageZwei.show();
-                        });
-
-
-                        /*
-                        final int MEASURE_WORK = 5000;
-                        final int STEP = MEASURE_WORK / 20;
-                        int work = 0;
-
-                        while (work < MEASURE_WORK) {
-                            work += STEP;
-                            //warten anstatt "echter" Aufgabe
-                            Thread.sleep(STEP);
-                            // melde Fortschritt
-                            updateProgress(work, MEASURE_WORK);
+                    protected String call() throws Exception {
+                        if (selectedFile != null) {
+                            // Dateiinhalt lesen
+                            return new String(Files.readAllBytes(selectedFile.toPath()));
                         }
-                        Platform.runLater(
-                                () -> label.textProperty().setValue("Done")
-                        );
-                        return null;
-
-                         */
                         return null;
                     }
                 };
             }
         };
-        /*button.setOnAction(event -> {
-            service.reset();
-            DoubleProperty progressProp = progressBar.progressProperty();
-            if (progressProp.isBound()) progressProp.unbind();
-            progressProp.bind(service.progressProperty());
-            label.textProperty().setValue("Warte ....");
-            service.start();
+
+        // Setze den onSucceeded Event-Handler
+        service.setOnSucceeded(event -> {
+            // Das Ergebnis der Aufgabe (der Inhalt der Datei)
+            String fileContent = service.getValue();
+            if (fileContent != null) {
+                Platform.runLater(() -> {
+                    final Label labelZwei = new Label("Datei erfolgreich gelesen:\n" + fileContent);
+
+                    Stage stageZwei = new Stage();
+                    final VBox contentZwei = new VBox();
+                    Scene sceneZwei = new Scene(contentZwei);
+                    contentZwei.getChildren().addAll(labelZwei);
+                    contentZwei.setPrefSize(400, 300);
+
+                    stageZwei.setScene(sceneZwei);
+                    stageZwei.show();
+                });
+            }
         });
 
-         */
-
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                locateFile(event);
-                System.out.println("File wurde ausgewählt");
+        button.setOnAction(event -> {
+            locateFile(event);
+            if (selectedFile != null) {
+                System.out.println("Datei wurde ausgewählt: " + selectedFile.getName());
                 service.reset();
                 service.start();
             }
         });
-
-
-
-        //TODO
-        //recherchiert, wie man Code ausführen kann, direkt nachdem ein Service
-        //erfolgreich abgeschlossen ist
     }
 
     protected void locateFile(ActionEvent event) {
@@ -122,7 +89,6 @@ public class ThreadFX extends Application {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Open File");
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-        File file = chooser.showOpenDialog(new Stage());
+        selectedFile = chooser.showOpenDialog(new Stage());
     }
 }
-
