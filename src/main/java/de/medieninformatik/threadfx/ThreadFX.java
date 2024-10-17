@@ -50,6 +50,19 @@ public class ThreadFX extends Application {
                         //TODO
                         //Hier muss vernünftige "Arbeit" eingefügt werden
 
+
+                        final Label labelZwei = new Label("Hier könnte Ihre File stehen. Stellen Sie sich das mal vor :o");
+                        content.getChildren().addAll(labelZwei);
+
+
+                        Stage stageZwei = new Stage();
+                        final VBox contentZwei = new VBox();
+                        Scene sceneZwei = new Scene(contentZwei);
+                        contentZwei.setPrefSize(400, 300);
+
+                        stageZwei.setScene(sceneZwei);
+                        stageZwei.show();
+                        /*
                         final int MEASURE_WORK = 5000;
                         final int STEP = MEASURE_WORK / 20;
                         int work = 0;
@@ -64,6 +77,9 @@ public class ThreadFX extends Application {
                         Platform.runLater(
                                 () -> label.textProperty().setValue("Done")
                         );
+                        return null;
+
+                         */
                         return null;
                     }
                 };
@@ -84,7 +100,8 @@ public class ThreadFX extends Application {
             @Override
             public void handle(ActionEvent event) {
                 locateFile(event);
-
+                System.out.println("File wurde ausgewählt");
+                service.start();
             }
         });
 
@@ -100,7 +117,6 @@ public class ThreadFX extends Application {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Open File");
         File file = chooser.showOpenDialog(new Stage());
-        file.showDocument(file.toURI().toString());
     }
 }
 
