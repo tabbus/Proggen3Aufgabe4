@@ -45,11 +45,39 @@ public class ThreadFX extends Application {
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
-                    @Override
+                     @Override
                     protected Void call() throws Exception {
-                        //TODO
+                       //TODO
                         //Hier muss vernünftige "Arbeit" eingefügt werden
+                         Stage newWindow = new Stage();
+                         newWindow.setTitle("Neues Fenster");
 
+                         // Erstelle den Inhalt für das neue Fenster
+                         VBox vbox = new VBox();
+                         vbox.getChildren().add(new Button("Hallo in neuem Fenster"));
+
+                         // Setze die Scene für das neue Fenster
+                         Scene scene = new Scene(vbox, 200, 100);
+                         newWindow.setScene(scene);
+
+                         // Zeige das neue Fenster
+                         newWindow.show();
+                     });
+
+                    // Erstelle das Hauptlayout
+                    VBox root = new VBox();
+
+                    // Setze die Scene für das Hauptfenster
+                    Scene scene = new Scene(root, 300, 200);
+        primaryStage.setScene(scene);
+
+                    // Setze den Titel des Hauptfensters
+        primaryStage.setTitle("Hauptfenster");
+
+                    // Zeige das Hauptfenster
+        primaryStage.show();
+                }
+                         /*
                         final int MEASURE_WORK = 5000;
                         final int STEP = MEASURE_WORK / 20;
                         int work = 0;
@@ -64,12 +92,16 @@ public class ThreadFX extends Application {
                         Platform.runLater(
                                 () -> label.textProperty().setValue("Done")
                         );
-                        return null;
-                    }
+                        return null;*/
+                    return null;
+                     }
+
+
+
                 };
             }
         };
-        /*button.setOnAction(event -> {
+        button.setOnAction(event -> {
             service.reset();
             DoubleProperty progressProp = progressBar.progressProperty();
             if (progressProp.isBound()) progressProp.unbind();
@@ -78,17 +110,14 @@ public class ThreadFX extends Application {
             service.start();
         });
 
-         */
+
 
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 locateFile(event);
-
             }
         });
-
-
 
         //TODO
         //recherchiert, wie man Code ausführen kann, direkt nachdem ein Service
@@ -100,7 +129,8 @@ public class ThreadFX extends Application {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Open File");
         File file = chooser.showOpenDialog(new Stage());
-        file.showDocument(file.toURI().toString());
+
+        //file.showDocument(file.toURI().toString());
     }
 }
 
